@@ -10,6 +10,7 @@ import database.AppDbSchema;
 import database.AppDbSchema.AppTable;
 import database.AppDbSchema.UserTable;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -73,6 +74,7 @@ public class CrimeLab {
         );
 
         mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).setValue(c);
+        registerListener();
 
     }
 
@@ -87,6 +89,8 @@ public class CrimeLab {
      //   mCrimes.add(c);
         //users/userID/crimeID/crime
         mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).setValue(c);
+        registerListener();
+
     }
 
     private ContentValues getContentValues(Crime c) {
@@ -226,14 +230,66 @@ public class CrimeLab {
                     ContentValues values =  new ContentValues();
                     values.put(UserTable.Cols.USERID, userID.toString());
                     mSQLiteDatabase.insert(UserTable.NAME,null,values);
-                    mDatabase.child("users").setValue(userID.toString());
+                    mDatabase.child("users").child(userID.toString()).setValue(userID.toString());
                     Log.i("USERID: ", "ADDED");
                 }
         } finally {
                 cursor.close();
             }
       //  }
-
+        registerListener();
         return userID;
+    }
+
+    public void registerListener(){
+      /*  ChildEventListener childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("FB: ", "onChildAdded:" + dataSnapshot.getKey());
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("FB: ", "onChildChanged:" + dataSnapshot.getKey());
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d("FB: ", "onChildRemoved:" + dataSnapshot.getKey());
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d("FB: ", "onChildMoved:" + dataSnapshot.getKey());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("FB: ", "onChildCancelled:" );
+
+            }
+        };
+
+        mDatabase.child("users").addChildEventListener(childEventListener);
+ */
+        ValueEventListener valueListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.i("FB: ", "onDataChange "+ dataSnapshot.getValue());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("FB: ", "loadPost:onCancelled", databaseError.toException());
+
+            }
+        };
+        mDatabase.child("users").addValueEventListener(valueListener);
+
     }
 }
