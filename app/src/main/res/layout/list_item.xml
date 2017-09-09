@@ -2,12 +2,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-                android:paddingBottom="8dp">
+                android:padding="8dp"
+                android:layout_marginBottom="12dp"
+                android:background="@color/grey">
 
     <CheckBox
         android:id="@+id/solved_list"
+        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
+        android:id="@+id/flat_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
         android:layout_alignParentRight="true"/>
 
     <TextView
@@ -16,14 +28,44 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/solved_list"
         android:layout_marginLeft="8dp"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp"
         android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/time_list"
+        android:layout_marginBottom="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_list"
+        android:layout_marginLeft="8dp"/>
+
     <TextView
         android:id="@+id/date_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
         android:layout_below="@id/title_list"
-        android:layout_toLeftOf="@id/solved_list"
-        android:layout_marginLeft="8dp"/>
+        android:layout_toRightOf="@id/time_list"/>
+    <TextView
+        android:id="@+id/pick_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/time_list"
+        android:layout_marginLeft="8dp"
+        android:text="Pickup at: "
+        android:textStyle="bold"
+        android:paddingBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/pickup_list"
+        android:layout_toRightOf="@id/pick_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/time_list"
+        android:layout_marginLeft="4dp"
+        android:textStyle="bold"
+        android:paddingBottom="10dp"/>
 
 
 </RelativeLayout>

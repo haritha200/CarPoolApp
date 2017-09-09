@@ -4,13 +4,15 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import database.AppDbSchema.AppTable;
+import database.AppDbSchema.UserTable;
+
 
 /**
  * Created by haritha on 2/6/17.
  */
 public class AppDbHelper extends SQLiteOpenHelper {
 
-        public static final int VERSION= 3;
+        public static final int VERSION= 1;
         public static final String DATABASENAME= "appdb.db";  //for the constructor
 
        // private static final String DATABASE_ALTER_APP_1 = "ALTER TABLE "
@@ -26,14 +28,18 @@ public class AppDbHelper extends SQLiteOpenHelper {
             //CAREFUL WITH THE COMMAS AND SPACING !!
             db.execSQL("create table "+AppTable.NAME+" ("+
                     " _id integer primary key autoincrement, "+
-                 //   AppTable.Cols.UUID+", "+
-                    AppTable.Cols.COUNTLIST+","+
-                    AppTable.Cols.PREVCOUNTLIST+","+
-                    AppTable.Cols.PKGNAME+","+
-                    AppTable.Cols.LASTUSED+","+
-                    AppTable.Cols.TIMEUSED+","+
-                    AppTable.Cols.WORLDAVGLIST+","+
-                    AppTable.Cols.COUNT+")"
+                    AppTable.Cols.TIME+","+
+                    AppTable.Cols.TITLE+","+
+                    AppTable.Cols.PHONE+","+
+                    AppTable.Cols.PICKUP+","+
+                    AppTable.Cols.FLAT+","+
+                    AppTable.Cols.DATE+","+
+                    AppTable.Cols.CRIMEID+")"
+            );
+
+            db.execSQL("create table "+ UserTable.NAME+" ("+
+                    " _id integer primary key autoincrement, "+
+                    UserTable.Cols.USERID+")"
             );
         }
 

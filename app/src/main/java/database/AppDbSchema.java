@@ -5,23 +5,28 @@ package database;
  */
 
 public class AppDbSchema {
-    public static final class AppTable{
-        public static final String NAME= "AppTable";
+    public static final class AppTable {
+        public static final String NAME = "AppTable";
 
-        public static final class Cols{
-            public static final String COUNTLIST= "countlist";
-            public static final String LASTUSED= "lastused";
-            public static final String COUNT= "count";
-            public static final String PKGNAME="pkgname";
-            public static final String TIMEUSED="timeused";
-            public static final String WORLDAVGLIST="worldavglist";
-
-            public static final String PREVCOUNTLIST="prevcountlist";
+        public static final class Cols {
+            public static final String CRIMEID = "crimeid";
+            public static final String TITLE = "title";
+            public static final String PICKUP = "pickup";
+            public static final String FLAT = "flat";
+            public static final String PHONE = "phone";
+            public static final String DATE = "date";
+            public static final String TIME = "time";
 
         }
 
     }
 
+    public static final class UserTable {
+        public static final String NAME = "UserTable";
 
+        public static final class Cols {
+            public static final String USERID = "userid";
+        }
 
+    }
 }

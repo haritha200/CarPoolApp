@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "495470793904",
+    "firebase_url": "https://carpoolapp-e3873.firebaseio.com",
+    "project_id": "carpoolapp-e3873",
+    "storage_bucket": "carpoolapp-e3873.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:495470793904:android:7eebb517e5c6260f",
+        "android_client_info": {
+          "package_name": "com.bobdylan.haritha.criminalintentapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "495470793904-dktv7s7qriehdht0htiaqb1icirjojbp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4cQKUhJhBEUKRIEcjd4rpLbpW_YgWx-U"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

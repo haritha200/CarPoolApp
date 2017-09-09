@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">CarPoolApp</string>
+    <string name="app_name">SJW Car Pool App</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_crime_pager">CrimePagerActivity</string>
+    <string name="no_of_crimes"> %1$d crimes</string>
 </resources>

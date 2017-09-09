@@ -6,48 +6,133 @@
     >
 
     <TextView
+        android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title"
+        android:text="Passenger Details"
         android:textStyle="bold"
         style="?android:listSeparatorTextViewStyle"/>
 
     <EditText
+        android:layout_marginTop="16dp"
         android:id="@+id/crime_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter Crime title"
+        android:hint="Name"
         android:layout_marginLeft="16dp"/>
-    <TextView
+    <EditText
+        android:layout_marginTop="16dp"
+        android:id="@+id/flat_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Details"
+        android:hint="Flat number (eg: D-602)"
+        android:layout_marginLeft="16dp"/>
+    <EditText
+        android:layout_marginTop="16dp"
+        android:id="@+id/phone_no"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Phone number"
+        android:layout_marginLeft="16dp"/>
+    <TextView
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Trip Details"
         android:textStyle="bold"
         style="?android:listSeparatorTextViewStyle"/>
-    <Button
-        android:id="@+id/date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+    <TextView
+            android:layout_marginTop="16dp"
+            android:textSize="16sp"
+            android:layout_marginStart="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pickup point: "
+            android:layout_marginLeft="16dp"/>
+        <RadioGroup
+            android:layout_marginTop="7dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/pickup_radiogroup"
+            android:orientation="horizontal">
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/sjw_radio"
+                android:text="SJW"/>
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/airport_radio"
+                android:text="Airport"/>
+        </RadioGroup>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+        <TextView
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            android:textSize="16sp"
+            android:layout_marginStart="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set Date: "
+            android:layout_marginLeft="16dp"/>
+        <Button
+            android:layout_marginTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:id="@+id/date"
+            android:text = "Set Date"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="16dp">
+        <TextView
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            android:textSize="16sp"
+            android:layout_marginStart="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set Time: "
+            android:layout_marginLeft="16dp"/>
+        <Button
+            android:layout_marginTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:id="@+id/time"
+            android:text = "Set Time"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"/>
+    </LinearLayout>
+
     <CheckBox
         android:id="@+id/solved"
+        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Solved"
         android:layout_marginLeft="16dp"
         />
-    <Button
-        android:id="@+id/contact_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Choose Suspect for crime!"/>
-    <Button
-        android:id="@+id/dial_suspect"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Call suspect ! "/>
-    <Button
-        android:id="@+id/send_report"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Send crime report"/>
 </LinearLayout>
