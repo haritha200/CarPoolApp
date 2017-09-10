@@ -15,7 +15,7 @@ public class Crime {
     private UUID mId;
     private long mDate;
     private long mTime;
-    private boolean mIsMatched;
+    private boolean mIsMatched = false;
 
     public boolean isMatched() {
         return mIsMatched;
@@ -36,6 +36,7 @@ public class Crime {
         mTitle=  new String ("Ravisankar");
         mFlat = new String("D-602");
         mPhone= new String ("98441025554");
+        mIsMatched = false;
 
     }
 

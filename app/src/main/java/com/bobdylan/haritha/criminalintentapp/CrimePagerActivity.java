@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 
 import java.util.ArrayList;
@@ -35,8 +36,12 @@ public class CrimePagerActivity extends AppCompatActivity {
         viewPager.setAdapter(new FragmentStatePagerAdapter(fm) {    //viewpager needs a pageradapter to manage views
             @Override
             public Fragment getItem(int position) {
-                Crime crime= mCrimes.get(position); //crime in array position 'position'
-                return CrimeFragment.newInstance(crime.getId());    //crime with UUID 'getid'
+                Crime crime= mCrimes.get(position);//crime in array position 'position'
+                Log.i("CRIMEPAGERACT: ", ""+crime.isMatched());
+                if(!crime.isMatched())
+                    return CrimeFragment.newInstance(crime.getId());    //crime with UUID 'getid'
+                else
+                    return MatchedFragment.newInstance(crime.getId());
             }
 
             @Override

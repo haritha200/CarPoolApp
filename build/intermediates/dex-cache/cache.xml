@@ -196,7 +196,7 @@
         jumboMode="true"
         optimize="true"
         revision="24.0.3"
-        sha1="e564e48dfca481306d5e1b5253701cbf125b96aa">
+        sha1="67c59424cd31f339e7728a5803bb0ae24c2193b0">
         <dex dex="/home/haritha/Downloads/my android app projects/criminalintent upto sql (with toolbar)_3/CriminalIntentApp/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_a20bee3f325e93efeaed56c480875cd4e5c9a12d/classes.dex" />
     </item>
     <item
@@ -282,21 +282,21 @@
     </item>
     <item
         is-multidex="true"
-        jar="/home/haritha/Downloads/my android app projects/criminalintent upto sql (with toolbar)_3/CriminalIntentApp/app/build/intermediates/exploded-aar/com.android.support/design/24.2.1/jars/classes.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="24.0.3"
-        sha1="e03f47f3d1017a093bb3239d4ec47c3447f40744">
-        <dex dex="/home/haritha/Downloads/my android app projects/criminalintent upto sql (with toolbar)_3/CriminalIntentApp/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-design-24.2.1_1a4bb4a8baa298f51a162addb657810213bb9024/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
         jar="/home/haritha/Downloads/my android app projects/criminalintent upto sql (with toolbar)_3/CriminalIntentApp/app/build/intermediates/exploded-aar/com.google.firebase/firebase-analytics-impl/9.8.0/jars/classes.jar"
         jumboMode="true"
         optimize="true"
         revision="24.0.3"
         sha1="190a642ba16d1421296a4d794606279b80039c59">
         <dex dex="/home/haritha/Downloads/my android app projects/criminalintent upto sql (with toolbar)_3/CriminalIntentApp/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-analytics-impl-9.8.0_894fc1b9f0373ac4817b5135609cb5d41ebffe24/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/haritha/Downloads/my android app projects/criminalintent upto sql (with toolbar)_3/CriminalIntentApp/app/build/intermediates/exploded-aar/com.android.support/design/24.2.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="e03f47f3d1017a093bb3239d4ec47c3447f40744">
+        <dex dex="/home/haritha/Downloads/my android app projects/criminalintent upto sql (with toolbar)_3/CriminalIntentApp/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-design-24.2.1_1a4bb4a8baa298f51a162addb657810213bb9024/classes.dex" />
     </item>
     <item
         is-multidex="true"
@@ -313,7 +313,7 @@
         jumboMode="true"
         optimize="true"
         revision="24.0.3"
-        sha1="054cb820cf5ad9ace231f0767bcb8f36ba7e8ce9">
+        sha1="f81d383a74c3d7d4c385daf05bbe5da591d2a50e">
         <dex dex="/home/haritha/Downloads/my android app projects/criminalintent upto sql (with toolbar)_3/CriminalIntentApp/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_f3fff3005948a21c3efe3cdc396b06e4e0cf52a7/classes.dex" />
     </item>
     <item

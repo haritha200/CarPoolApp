@@ -60,6 +60,7 @@ public class CrimeListFragment extends Fragment {
                crimes.addCrime(c);  //add to the model layer
                Intent intent = CrimePagerActivity.newIntent(getActivity(), c.getId());
                startActivity(intent);   //edit details of the new crime in the crimepageractivity
+           //    crimes.updateCrime(c);
                return true;
            }
            default:
@@ -180,7 +181,8 @@ public class CrimeListFragment extends Fragment {
         @Override
         public void onClick(View v) {
             changedCrimePosition= getAdapterPosition();
-            Intent intent= CrimePagerActivity.newIntent(getActivity(), mCrime.getId());  //1. store id of clicked crime
+            Intent intent;
+            intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getId());  //1. store id of clicked crime
             startActivity(intent);  //2.
         }
     }

@@ -97,8 +97,8 @@ public class CrimeLab {
      //   mCrimes.add(c);
         //users/userID/crimeID/crime
         Log.i("pushing: ", c.getTime() +  "");
-        mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).setValue(c);
-        registerListener();
+       // mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).setValue(c);
+       // registerListener();
 
     }
 
@@ -265,7 +265,7 @@ public class CrimeLab {
                                 dateFormat2.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
 
                                 Log.i("Times: ",dateFormat1.format(new Date(c.getTime())) + " and " +  dateFormat2.format(new Date((long)tripDetails.get("time"))));
-                                if((Math.abs(c.getTime()-(long)tripDetails.get("time")))/60000<=60){
+                                if((Math.abs(c.getTime()-(long)tripDetails.get("time")))/60000<=30){
                                     Log.i("MATCHED: ", "TIMES MATCHED" );
                                     c.setMatched(true);
                                     updateCrime(c);
@@ -277,7 +277,7 @@ public class CrimeLab {
                 }
 
             }
-            
+
         }
     }
 }
