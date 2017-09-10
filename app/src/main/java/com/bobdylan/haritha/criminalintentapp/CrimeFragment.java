@@ -27,7 +27,9 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
 
 /**
@@ -46,7 +48,7 @@ public class CrimeFragment extends Fragment {
     private RadioButton mSJW, mAirport;
     private CheckBox mSolved;
     private Button mDateButton, mTimeButton;
-    private boolean isDelete;
+    private boolean isDelete = false;
 
     //TO CREATE THE FRAGMENT AND INSERT FRAG-ARGS. SO THAT THE CRIMEACTIVITY CAN CALL IT TO PLACE THIS FRAGMENT IN IT'S VIEW
     //5. bind args to this fragment
@@ -208,7 +210,10 @@ public class CrimeFragment extends Fragment {
             }
         });
         mTimeButton=(Button) v.findViewById(R.id.time);
-        mTimeButton.setText(DateFormat.format("hh:mm a", mCrime.getTime()));
+
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("hh:mm a");
+        dateFormat1.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
+        mTimeButton.setText(dateFormat1.format( mCrime.getTime()));
         mTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -233,7 +238,10 @@ public class CrimeFragment extends Fragment {
         } else if(requestCode==REQUEST_CODE_TIME){
             long date= (long) data.getSerializableExtra("time picked");
             mCrime.setTime(date);
-            mTimeButton.setText(DateFormat.format("hh:mm a", mCrime.getTime()));
+            Log.i("CRIMEFRAG: ", ""+date);
+            SimpleDateFormat dateFormat1 = new SimpleDateFormat("hh:mm a");
+            dateFormat1.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
+            mTimeButton.setText(dateFormat1.format(new java.util.Date(date)));
         }
     }
 }

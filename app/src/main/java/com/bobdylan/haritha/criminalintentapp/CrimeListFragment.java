@@ -22,8 +22,11 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.UUID;
 
 /**
@@ -120,8 +123,6 @@ public class CrimeListFragment extends Fragment {
         if (mRecyclerView.getAdapter()!= null)
           //  mRecyclerView.getAdapter().notifyItemChanged(changedCrimePosition); //refetch single data from model layer
         {
-            Log.i("UPDATE UI: ", "DONE");
-
             mRecyclerView.setAdapter(new CrimeAdapter());
             mRecyclerView.getAdapter().notifyDataSetChanged();  //or refetch all data from model layer for viewpager
         }
@@ -167,7 +168,10 @@ public class CrimeListFragment extends Fragment {
                 }
             });
             mDate.setText(DateFormat.format("EEEE, dd MMMM", mCrime.getDate()));
-            mTime.setText(DateFormat.format("hh:mm a", mCrime.getTime()));
+           // Log.i("listfrag: ",""+ mCrime.getTime());
+            SimpleDateFormat dateFormat1 = new SimpleDateFormat("hh:mm a");
+            dateFormat1.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
+            mTime.setText(dateFormat1.format(new Date(mCrime.getTime())));
             mTitle.setText(crime.getTitle());
             mFlat.setText(crime.getFlat());
             mPickup.setText(crime.getPickUp());
@@ -203,7 +207,7 @@ public class CrimeListFragment extends Fragment {
         public CrimeAdapter() {
             super();
             mCrimes = CrimeLab.get(getActivity()).getCrimes();
-            Log.i("IN CRIMEADAPT, SIZE: ", ""+mCrimes.size());
+         //   Log.i("IN CRIMEADAPT, SIZE: ", ""+mCrimes.size());
 
         }
 

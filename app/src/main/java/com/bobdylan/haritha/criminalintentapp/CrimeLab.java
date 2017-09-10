@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.format.DateFormat;
 import android.util.Log;
 
 import database.AppDbSchema;
@@ -18,9 +19,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.lang.reflect.Array;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import database.AppDbHelper;
@@ -30,6 +35,7 @@ public class CrimeLab {
     private ArrayList<Crime> mCrimes;
     private UUID userID;
     private SQLiteDatabase mSQLiteDatabase;
+    private ValueEventListener valueListener;
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
     public static CrimeLab get(Context context) {
@@ -73,6 +79,8 @@ public class CrimeLab {
                         {c.getId().toString()}
         );
 
+        Log.i("updating: ", c.getTime() +  "");
+
         mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).setValue(c);
         registerListener();
 
@@ -88,6 +96,7 @@ public class CrimeLab {
 
      //   mCrimes.add(c);
         //users/userID/crimeID/crime
+        Log.i("pushing: ", c.getTime() +  "");
         mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).setValue(c);
         registerListener();
 
@@ -134,7 +143,7 @@ public class CrimeLab {
         } finally {
             cursor.close();
         }
-        Log.i("GETCRIMES: ", ""+ crimes.size());
+      //  Log.i("GETCRIMES: ", ""+ crimes.size());
         return crimes;
     }
 
@@ -181,6 +190,8 @@ public class CrimeLab {
 
                 //unpack from table and into Crime Object
                 Crime c= packCrime(cursor);
+                Log.i("retreiving: ", c.getTime() +  "");
+
                 return c;
             }
 
@@ -242,54 +253,84 @@ public class CrimeLab {
     }
 
     public void registerListener(){
-      /*  ChildEventListener childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d("FB: ", "onChildAdded:" + dataSnapshot.getKey());
+
+        if(valueListener==null){
+            valueListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.i("FB: ", "onDataChange "+ dataSnapshot.getValue());
+                    findMatch((Map<String, Object>) dataSnapshot.getValue());
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Getting Post failed, log a message
+                    Log.w("FB: ", "loadPost:onCancelled", databaseError.toException());
+
+                }
+            };
+            mDatabase.child("users").addValueEventListener(valueListener);
+
+        }
+
+
+    }
+
+    public void findMatch(Map<String, Object> allUsers){
+        if(allUsers==null) return;
+
+        for(Map.Entry<String, Object> singleUserData: allUsers.entrySet()){
+
+           // Log.i("userID: ", singleUserData.getKey());
+            if(!singleUserData.getKey().equals(userID.toString())){
+              //  Log.i("userID-value", ""+singleUserData.getValue());
+                Map<String, Object> allTripsData= (Map<String, Object>)singleUserData.getValue();
+                for(Map.Entry<String, Object> singleTripData: allTripsData.entrySet() ){
+                  //  Log.i("TripID-value", ""+singleTripData.getValue());
+                    //{pickUp=Airport, title=Haritha, time=1504898864228, id={leastSignificantBits=-7848829978341378696, mostSignificantBits=7471468005013277255}, solved=false, phone=98441025554, date=1504898864228, flat=D-602}
+                    Map tripDetails =(Map)singleTripData.getValue();
+                    for (Crime c: getCrimes()) {
+                        if(c.getPickUp().equals(tripDetails.get("pickUp"))){
+                            //not workingg
+                            Calendar calendar = Calendar.getInstance();
+                            Calendar c2 = Calendar.getInstance();
+                           // calendar.set(Calendar.HOUR_OF_DAY, 6);// for 6 hour
+                           // calendar.set(Calendar.MINUTE, 0);
+
+                           // calendar.setTimeInMillis(c.getTime());
+                            // calendar.setTimeInMillis(c.getTime());
+                            SimpleDateFormat dateFormat1 = new SimpleDateFormat("HH");
+                            dateFormat1.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
+                            dateFormat1.format(new Date(c.getTime()));
+
+                            SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH");
+                            dateFormat2.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
+                            dateFormat2.format(new Date((long)tripDetails.get("time")));
+
+                            if(DateFormat.format("EEEE, dd MMMM yyyy",new Date(c.getDate())).equals(DateFormat.format("EEEE, dd MMMM yyyy", new Date((long)tripDetails.get("date"))))){
+                                Log.i("MATCHED: ", "DATES MATCHED " + c.getTime() + " and "+ tripDetails.get("time"));
+
+                                Log.i("Times: ",dateFormat1.format(new Date(c.getTime())) + " and " +  dateFormat2.format(new Date((long)tripDetails.get("time"))));
+                             //   c2.setTimeInMillis((long)tripDetails.get("time"));;
+                            //    Log.i("Times: ", calendar.get(Calendar.HOUR_OF_DAY) + " and " + c2.get(Calendar.HOUR_OF_DAY));
+
+                                if(Math.abs(Integer.parseInt(DateFormat.format("HH", new Date(c.getTime())).toString())-Integer.parseInt(DateFormat.format("HH", new Date((long)tripDetails.get("time"))).toString())) <=1){
+                                    Log.i("MATCHED: ", "TIMES MATCHED" );
+                                }
+                            }
+                        }
+                    }
+                }
 
             }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d("FB: ", "onChildChanged:" + dataSnapshot.getKey());
 
-            }
+//            Map singleUser = (Map) entry.getValue();
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.d("FB: ", "onChildRemoved:" + dataSnapshot.getKey());
+            //Get phone field and append to list
+        //    avg_Yvalue+=Float.parseFloat(singleUser.get("y").toString());      //avg_value of one app
+        //    avg_Mins+=Float.parseFloat(singleUser.get("mins").toString());
 
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d("FB: ", "onChildMoved:" + dataSnapshot.getKey());
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.d("FB: ", "onChildCancelled:" );
-
-            }
-        };
-
-        mDatabase.child("users").addChildEventListener(childEventListener);
- */
-        ValueEventListener valueListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.i("FB: ", "onDataChange "+ dataSnapshot.getValue());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w("FB: ", "loadPost:onCancelled", databaseError.toException());
-
-            }
-        };
-        mDatabase.child("users").addValueEventListener(valueListener);
-
+        }
     }
 }
