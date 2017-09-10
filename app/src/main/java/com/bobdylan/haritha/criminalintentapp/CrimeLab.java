@@ -1,9 +1,14 @@
 package com.bobdylan.haritha.criminalintentapp;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.app.NotificationCompat;
 import android.text.format.DateFormat;
 import android.util.Log;
 
@@ -35,6 +40,7 @@ public class CrimeLab {
     private static CrimeLab sCrimeLab;   //cant say sCrimelab = new CrimeLab() since we dont have a context instance
     private ArrayList<Crime> mCrimes;
     private UUID userID;
+    private Context mContext;
     private SQLiteDatabase mSQLiteDatabase;
     private ValueEventListener valueListener;
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -43,11 +49,13 @@ public class CrimeLab {
         if(sCrimeLab==null){
             sCrimeLab=new CrimeLab(context);
         }
+
         return sCrimeLab;
     }
 
     private CrimeLab(Context context) {     //private constructor => only this class can create the object.
         mSQLiteDatabase = new AppDbHelper(context).getWritableDatabase();
+        mContext= context;
 
         userID= getUserID();     //generate singleton userID when crimelab is created
 
@@ -202,7 +210,7 @@ public class CrimeLab {
             Cursor  cursor = mSQLiteDatabase.rawQuery("select * from "+ UserTable.NAME,null);
             try {
                 if (cursor.getCount() != 0) {
-                    Log.i("USERID: ", "RETREIVED");
+                  //  Log.i("USERID: ", "RETREIVED");
                     cursor.moveToFirst();       //IMPORTANT. MOVE TO FIRST ROW OF ALL RETRIEVED ROWS, (here 1 row only)
                     userID = UUID.fromString(cursor.getString(cursor.getColumnIndex(UserTable.Cols.USERID)));
                 } else {
@@ -211,7 +219,7 @@ public class CrimeLab {
                     values.put(UserTable.Cols.USERID, userID.toString());
                     mSQLiteDatabase.insert(UserTable.NAME,null,values);
                     mDatabase.child("users").child(userID.toString()).setValue(userID.toString());
-                    Log.i("USERID: ", "ADDED");
+                  //  Log.i("USERID: ", "ADDED");
                 }
         } finally {
                 cursor.close();
@@ -255,13 +263,13 @@ public class CrimeLab {
                 for(Map.Entry<String, Object> singleTripData: allTripsData.entrySet() ){
                     Map tripDetails =(Map)singleTripData.getValue();
 
-                    Log.i("MATCHED TRIP? ", tripDetails.get("matched") +"");
+                    //Log.i("MATCHED TRIP? ", tripDetails.get("matched") +"");
                     if(tripDetails.get("matched").toString().equals("false")){
                         for (Crime c: getCrimes()) {
                             //  Boolean ismatched= false;
-                            Log.i("INSIDE: ", ""+tripDetails.get("title"));
+                          //  Log.i("INSIDE: ", ""+tripDetails.get("title"));
                             if(!c.isMatched() && c.getPickUp().equals(tripDetails.get("pickUp"))){
-                                Log.i("MATCHED: ", "PICKUPS");
+                            //    Log.i("MATCHED: ", "PICKUPS");
                                 if(DateFormat.format("EEEE, dd MMMM yyyy",new Date(c.getDate())).equals(DateFormat.format("EEEE, dd MMMM yyyy", new Date((long)tripDetails.get("date"))))){
                                     Log.i("MATCHED: ", "DATES MATCHED " + c.getTime() + " and "+ tripDetails.get("time"));
 
@@ -277,7 +285,7 @@ public class CrimeLab {
                                         c.setMatched(true);
                                         updateCrime(c);
                                         addMatchedTrip(c,tripDetails);
-                                        //and create notif
+                                        createNotif(c.getId(),c.getPickUp(), c.getDate(),c.getTime());
                                     }
                                 }
                             }
@@ -291,8 +299,32 @@ public class CrimeLab {
 
         }
     }
-     // {pickUp=Airport, title=Haritha, time=1504898864228,
-    // solved=false, phone=98441025554, date=1504898864228, flat=D-602}
+
+    public void createNotif(UUID tripid, String pickup, long date, long time){
+
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("hh:mm a");
+        dateFormat1.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
+        String timematch =dateFormat1.format(new Date(time));
+        dateFormat1 = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+        String datematch =dateFormat1.format(new Date(date));
+
+        Intent notificationIntent = CrimePagerActivity.newIntent(mContext,tripid );
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);    //FLAG_UPDATE_CURRENT allows you to access the intent args
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(mContext)
+                        .setSmallIcon(R.drawable.notification_icon)
+                        .setContentTitle(pickup+ "Pickup Matched!")
+                        .setDefaults(Notification.DEFAULT_SOUND| Notification.DEFAULT_LIGHTS|Notification.DEFAULT_VIBRATE)
+                        .setAutoCancel(true)
+                        .setContentIntent(intent)
+                        .setContentText("Pickup at "+ timematch+ " on "+datematch +" is matched!");
+
+        NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mNotificationManager.notify(001, mBuilder.build());
+    }
+
 
     public void addMatchedTrip(Crime myTrip, Map passengerDetails){
         ContentValues values =  new ContentValues();

@@ -20,8 +20,6 @@ public class CrimePagerActivity extends AppCompatActivity {
     private List<Crime> mCrimes;
     private ViewPager viewPager;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,32 +27,27 @@ public class CrimePagerActivity extends AppCompatActivity {
         mCrimes= CrimeLab.get(this).getCrimes();
         viewPager= (ViewPager) findViewById(R.id.crime_pager);
         UUID crimeId= (UUID) getIntent().getSerializableExtra(EXTRA_CRIME_ID);  //retrieve id of clicked crime from extra
-
-
         FragmentManager fm= getSupportFragmentManager();
-
         viewPager.setAdapter(new FragmentStatePagerAdapter(fm) {    //viewpager needs a pageradapter to manage views
             @Override
             public Fragment getItem(int position) {
                 Crime crime= mCrimes.get(position);//crime in array position 'position'
-                Log.i("CRIMEPAGERACT: ", ""+crime.isMatched());
+              //  Log.i("CRIMEPAGERACT: ", ""+crime.isMatched());
                 if(!crime.isMatched())
                     return CrimeFragment.newInstance(crime.getId());    //crime with UUID 'getid'
                 else
                     return MatchedFragment.newInstance(crime.getId());
             }
-
             @Override
             public int getCount() {
                 return mCrimes.size();
             }
 
         });
-
-
         for (int i=0;i<mCrimes.size();i++){
             if(mCrimes.get(i).getId().equals(crimeId)){
-                viewPager.setCurrentItem(i); break;     //find clicked crime's index in the arraylist
+                viewPager.setCurrentItem(i);
+                break;     //find clicked crime's index in the arraylist
                 //set this index as the current item to view in viewpager
             }
         }
