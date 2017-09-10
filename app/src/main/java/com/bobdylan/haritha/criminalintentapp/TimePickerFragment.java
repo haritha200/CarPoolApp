@@ -43,6 +43,7 @@ public class TimePickerFragment extends DialogFragment{
         final TimePicker timePicker= (TimePicker) v.findViewById(R.id.dialog_time_picker); // then findviewbyid for each subview
         final long date= (long) getArguments().getSerializable("display time");   //get date from frag's args
         final Calendar calendar= GregorianCalendar.getInstance();          //split date into year,month,day
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
         calendar.setTime(new Date(date));
         int hour= calendar.get(Calendar.HOUR_OF_DAY);
         int min= calendar.get(Calendar.MINUTE);

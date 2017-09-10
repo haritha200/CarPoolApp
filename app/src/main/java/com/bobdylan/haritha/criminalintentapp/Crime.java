@@ -15,12 +15,33 @@ public class Crime {
     private UUID mId;
     private long mDate;
     private long mTime;
+    private boolean mIsMatched;
+
+    public boolean isMatched() {
+        return mIsMatched;
+    }
+
+    public void setMatched(boolean matched) {
+        mIsMatched = matched;
+    }
+
+    public Crime() {
+
+        mId= UUID.randomUUID(); //generate new id for every new object
+        Date date=new Date();       //set as default date (will implement datepicker later to set date)
+        //mTime=new Date();
+        mDate=date.getTime();
+        mTime=date.getTime();
+        mPickUp=new String("St. John's Wood Apartments");       //DEFAULTS
+        mTitle=  new String ("Ravisankar");
+        mFlat = new String("D-602");
+        mPhone= new String ("98441025554");
+
+    }
 
     public void setId(UUID id) {
         mId = id;
     }
-
-    private boolean mIsSolved;
 
     public String getPhone() {
         return mPhone;
@@ -46,20 +67,6 @@ public class Crime {
         mPickUp = pickUp;
     }
 
-
-
-    public Crime() {
-        mId= UUID.randomUUID(); //generate new id for every new object
-        Date date=new Date();       //set as default date (will implement datepicker later to set date)
-        //mTime=new Date();
-        mDate=date.getTime();
-        mTime=date.getTime();
-        mPickUp=new String("St. John's Wood Apartments");       //DEFAULTS
-        mTitle=  new String ("Ravisankar");
-        mFlat = new String("D-602");
-        mPhone= new String ("98441025554");
-
-    }
     public long getTime() {return mTime;}
 
     public void setTime(long time) {mTime = time;}
@@ -68,16 +75,8 @@ public class Crime {
         return mDate;
     }
 
-    public boolean isSolved() {
-        return mIsSolved;
-    }
-
     public void setDate(long date) {
         mDate = date;
-    }
-
-    public void setSolved(boolean solved) {
-        mIsSolved = solved;
     }
 
     public String getTitle() {

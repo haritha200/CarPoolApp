@@ -46,7 +46,6 @@ public class CrimeFragment extends Fragment {
     private EditText mTitle, mFlat, mPhone;
     private RadioGroup mPickUp;
     private RadioButton mSJW, mAirport;
-    private CheckBox mSolved;
     private Button mDateButton, mTimeButton;
     private boolean isDelete = false;
 
@@ -160,15 +159,6 @@ public class CrimeFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
 
-            }
-        });
-        mSolved=(CheckBox) v.findViewById(R.id.solved);
-        mSolved.setChecked(mCrime.isSolved());
-
-        mSolved.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mCrime.setSolved(isChecked);
             }
         });
 

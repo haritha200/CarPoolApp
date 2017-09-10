@@ -16,6 +16,7 @@ public class AppDbSchema {
             public static final String PHONE = "phone";
             public static final String DATE = "date";
             public static final String TIME = "time";
+            public static final String MATCHED = "matched";
 
         }
 

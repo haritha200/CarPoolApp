@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -139,6 +140,7 @@ public class CrimeListFragment extends Fragment {
         private Crime mCrime;
         private TextView mTitle, mDate, mTime, mFlat, mPickup;
         private CheckBox mCheckBox;
+        private RelativeLayout tripItem;
 
 
         public CrimeHolder(View itemView) {
@@ -149,9 +151,8 @@ public class CrimeListFragment extends Fragment {
             mPickup= (TextView) itemView.findViewById(R.id.pickup_list);
 
             mDate=(TextView)itemView.findViewById(R.id.date_list);
+            tripItem = (RelativeLayout)itemView.findViewById(R.id.trip_element);
             mTime=(TextView)itemView.findViewById(R.id.time_list);
-            mCheckBox=(CheckBox) itemView.findViewById(R.id.solved_list);
-
             itemView.setOnClickListener(this); //if itemview is clicked, Crimeholder's onClick(view) method is called
                                                 //since this class itself implements onClickListener
 
@@ -160,18 +161,16 @@ public class CrimeListFragment extends Fragment {
         public void bindCrimeToHolder(Crime crime) {
             mCrime=crime;
 
-            mCheckBox.setChecked(crime.isSolved());
-            mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    mCrime.setSolved(isChecked);
-                }
-            });
             mDate.setText(DateFormat.format("EEEE, dd MMMM", mCrime.getDate()));
            // Log.i("listfrag: ",""+ mCrime.getTime());
             SimpleDateFormat dateFormat1 = new SimpleDateFormat("hh:mm a");
             dateFormat1.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
             mTime.setText(dateFormat1.format(new Date(mCrime.getTime())));
+            if(!mCrime.isMatched())
+              tripItem.setBackgroundColor(getResources().getColor(R.color.grey));
+            else
+                tripItem.setBackgroundColor(getResources().getColor(R.color.green));
+
             mTitle.setText(crime.getTitle());
             mFlat.setText(crime.getFlat());
             mPickup.setText(crime.getPickUp());
@@ -181,18 +180,6 @@ public class CrimeListFragment extends Fragment {
         @Override
         public void onClick(View v) {
             changedCrimePosition= getAdapterPosition();
-
-
-               //     Toast.makeText(getActivity(),
-               //    mCrime.getTitle() + " clicked! Position: "+ changedCrimePosition, Toast.LENGTH_SHORT)
-               //    .show();
-
-           //Intent intent= new Intent(getActivity(), CrimePagerActivity.class);
-           //intent.putExtra(EXTRA_CRIME_ID, mCrime.getId());
-
-            //instead of creating the intent in this fragment like^^, we'll create it in the activity..
-            //because we want to keep intent-info within activities extras and fragment-info within fragment bundles
-
             Intent intent= CrimePagerActivity.newIntent(getActivity(), mCrime.getId());  //1. store id of clicked crime
             startActivity(intent);  //2.
         }

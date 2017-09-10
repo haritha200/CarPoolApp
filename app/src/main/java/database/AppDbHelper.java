@@ -34,6 +34,7 @@ public class AppDbHelper extends SQLiteOpenHelper {
                     AppTable.Cols.PICKUP+","+
                     AppTable.Cols.FLAT+","+
                     AppTable.Cols.DATE+","+
+                    AppTable.Cols.MATCHED+","+
                     AppTable.Cols.CRIMEID+")"
             );
 
