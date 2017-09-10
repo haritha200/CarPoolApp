@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import database.AppDbSchema.AppTable;
 import database.AppDbSchema.UserTable;
+import database.AppDbSchema.MatchTable;
+
 
 
 /**
@@ -41,6 +43,17 @@ public class AppDbHelper extends SQLiteOpenHelper {
             db.execSQL("create table "+ UserTable.NAME+" ("+
                     " _id integer primary key autoincrement, "+
                     UserTable.Cols.USERID+")"
+            );
+
+            db.execSQL("create table "+MatchTable.NAME+" ("+
+                    " _id integer primary key autoincrement, "+
+                    MatchTable.Cols.M_DATE+","+
+                    MatchTable.Cols.M_FLAT+","+
+                    MatchTable.Cols.M_PHONE+","+
+                    MatchTable.Cols.M_PICKUP+","+
+                    MatchTable.Cols.M_PNAME+","+
+                    MatchTable.Cols.M_TIME+","+
+                    MatchTable.Cols.TRIPID+")"
             );
         }
 

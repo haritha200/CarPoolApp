@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 import java.util.UUID;
 
 /**
@@ -21,7 +23,7 @@ import java.util.UUID;
 public class MatchedFragment extends Fragment {
     private static final String ARG_CRIME_ID = "matched crime id" ;
     private Crime mCrime;
-
+    private TextView p_name, p_flat, p_phone, p_date, p_time, p_pickUp;
     public static Fragment newInstance(UUID crimeid) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_CRIME_ID, crimeid);
@@ -65,6 +67,23 @@ public class MatchedFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View v=inflater.inflate(R.layout.fragment_matched_details, container,false);        //container is this layout's parent
+        p_name= (TextView)v.findViewById(R.id.p_name);
+        p_flat= (TextView)v.findViewById(R.id.p_flat);
+        p_date= (TextView)v.findViewById(R.id.p_date);
+        p_phone= (TextView)v.findViewById(R.id.p_phone);
+        p_pickUp= (TextView)v.findViewById(R.id.p_pickup);
+        p_time= (TextView)v.findViewById(R.id.p_time);
+
+        Crime matchedTrip = CrimeLab.get(getContext()).getMatchedTrip(mCrime);
+        p_name.setText(matchedTrip.getTitle());
+        p_flat.setText(matchedTrip.getFlat());
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("hh:mm a");
+        dateFormat1.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
+        p_time.setText(dateFormat1.format(matchedTrip.getTime()));
+        dateFormat1 = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+        p_date.setText(dateFormat1.format(matchedTrip.getDate()));
+        p_phone.setText(matchedTrip.getPhone());
+        p_pickUp.setText(matchedTrip.getPickUp());
         return v;
     }
 }

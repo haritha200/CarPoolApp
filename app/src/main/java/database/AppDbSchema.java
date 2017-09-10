@@ -30,4 +30,18 @@ public class AppDbSchema {
         }
 
     }
+    public static final class MatchTable {
+        public static final String NAME = "MatchTable";
+
+        public static final class Cols {
+            public static final String TRIPID = "tripid";
+            public static final String M_PNAME = "name";
+            public static final String M_FLAT = "flat";
+            public static final String M_PHONE = "phone";
+            public static final String M_TIME = "time";
+            public static final String M_PICKUP = "pickup";
+            public static final String M_DATE = "date";
+        }
+
+    }
 }

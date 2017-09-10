@@ -10,6 +10,7 @@ import android.util.Log;
 import database.AppDbSchema;
 import database.AppDbSchema.AppTable;
 import database.AppDbSchema.UserTable;
+import database.AppDbSchema.MatchTable;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -65,6 +66,12 @@ public class CrimeLab {
                         {c.getId().toString()}
         );
 
+        mSQLiteDatabase.delete(MatchTable.NAME,
+                MatchTable.Cols.TRIPID+ "= ?",
+                new String[]
+                        {c.getId().toString()}
+        );
+
         mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).removeValue();
      //   Log.i("deleted crimesize:", ""+getCrimes().size());
 
@@ -92,14 +99,9 @@ public class CrimeLab {
             ContentValues values= getContentValues(c);
             mSQLiteDatabase.insert(AppTable.NAME,null,values);
         }
-
-
-     //   mCrimes.add(c);
-        //users/userID/crimeID/crime
         Log.i("pushing: ", c.getTime() +  "");
        // mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).setValue(c);
        // registerListener();
-
     }
 
     private ContentValues getContentValues(Crime c) {
@@ -248,36 +250,113 @@ public class CrimeLab {
 
         for(Map.Entry<String, Object> singleUserData: allUsers.entrySet()){
             if(!singleUserData.getKey().equals(userID.toString())){
+
                 Map<String, Object> allTripsData= (Map<String, Object>)singleUserData.getValue();
                 for(Map.Entry<String, Object> singleTripData: allTripsData.entrySet() ){
                     Map tripDetails =(Map)singleTripData.getValue();
-                    for (Crime c: getCrimes()) {
-                      //  Boolean ismatched= false;
-                        if(!c.isMatched() && c.getPickUp().equals(tripDetails.get("pickUp"))){
 
-                            if(DateFormat.format("EEEE, dd MMMM yyyy",new Date(c.getDate())).equals(DateFormat.format("EEEE, dd MMMM yyyy", new Date((long)tripDetails.get("date"))))){
-                                Log.i("MATCHED: ", "DATES MATCHED " + c.getTime() + " and "+ tripDetails.get("time"));
+                    Log.i("MATCHED TRIP? ", tripDetails.get("matched") +"");
+                    if(tripDetails.get("matched").toString().equals("false")){
+                        for (Crime c: getCrimes()) {
+                            //  Boolean ismatched= false;
+                            Log.i("INSIDE: ", ""+tripDetails.get("title"));
+                            if(!c.isMatched() && c.getPickUp().equals(tripDetails.get("pickUp"))){
+                                Log.i("MATCHED: ", "PICKUPS");
+                                if(DateFormat.format("EEEE, dd MMMM yyyy",new Date(c.getDate())).equals(DateFormat.format("EEEE, dd MMMM yyyy", new Date((long)tripDetails.get("date"))))){
+                                    Log.i("MATCHED: ", "DATES MATCHED " + c.getTime() + " and "+ tripDetails.get("time"));
 
-                                SimpleDateFormat dateFormat1 = new SimpleDateFormat("HH");
-                                dateFormat1.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
+                                    SimpleDateFormat dateFormat1 = new SimpleDateFormat("HH");
+                                    dateFormat1.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
 
-                                SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH");
-                                dateFormat2.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
+                                    SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH");
+                                    dateFormat2.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
 
-                                Log.i("Times: ",dateFormat1.format(new Date(c.getTime())) + " and " +  dateFormat2.format(new Date((long)tripDetails.get("time"))));
-                                if((Math.abs(c.getTime()-(long)tripDetails.get("time")))/60000<=30){
-                                    Log.i("MATCHED: ", "TIMES MATCHED" );
-                                    c.setMatched(true);
-                                    updateCrime(c);
+                                    Log.i("Times: ",dateFormat1.format(new Date(c.getTime())) + " and " +  dateFormat2.format(new Date((long)tripDetails.get("time"))));
+                                    if((Math.abs(c.getTime()-(long)tripDetails.get("time")))/60000<=30){
+                                        Log.i("MATCHED: ", "TIMES MATCHED" );
+                                        c.setMatched(true);
+                                        updateCrime(c);
+                                        addMatchedTrip(c,tripDetails);
+                                        //and create notif
+                                    }
                                 }
                             }
-                        }
 
+                        }
                     }
+
                 }
 
             }
 
         }
+    }
+     // {pickUp=Airport, title=Haritha, time=1504898864228,
+    // solved=false, phone=98441025554, date=1504898864228, flat=D-602}
+
+    public void addMatchedTrip(Crime myTrip, Map passengerDetails){
+        ContentValues values =  new ContentValues();
+        values.put(MatchTable.Cols.TRIPID, String.valueOf(myTrip.getId()));
+        values.put(MatchTable.Cols.M_DATE, String.valueOf(passengerDetails.get("date")));
+        values.put(MatchTable.Cols.M_FLAT, String.valueOf(passengerDetails.get("flat")));
+        values.put(MatchTable.Cols.M_PHONE, String.valueOf(passengerDetails.get("phone")));
+        values.put(MatchTable.Cols.M_PICKUP, String.valueOf(passengerDetails.get("pickUp")));
+        values.put(MatchTable.Cols.M_PNAME, String.valueOf(passengerDetails.get("title")));
+        values.put(MatchTable.Cols.M_TIME, String.valueOf(passengerDetails.get("time")));
+        mSQLiteDatabase.insert(MatchTable.NAME,null,values);
+
+    }
+
+    public Crime getMatchedTrip(Crime myTrip){
+        if(myTrip==null) return null;
+
+        Cursor cursor= mSQLiteDatabase.query(MatchTable.NAME,     //get cursor
+                null,       //null here means select all columns
+                MatchTable.Cols.TRIPID+"=?",
+                new String[] {myTrip.getId().toString()} ,
+                null,
+                null,
+                null
+        );
+        try{
+            if(cursor.getCount() !=0) {
+
+                cursor.moveToFirst();       //IMPORTANT. MOVE TO FIRST ROW OF ALL RETRIEVED ROWS, (here 1 row only)
+
+                //unpack from table and into Crime Object
+                Crime c= packMatchedCrime(cursor);
+                Log.i("retreiving MATCHED: ", c.getTime() +  "");
+                return c;
+            }
+
+        } finally {
+            cursor.close();     //IMPORTANT TO CLOSE YOUR CURSOR
+        }
+        return null;
+    }
+
+    private Crime packMatchedCrime(Cursor cursor) {
+        Long time = cursor.getLong(cursor.getColumnIndex(MatchTable.Cols.M_TIME));
+        String title=cursor.getString(cursor.getColumnIndex(MatchTable.Cols.M_PNAME));
+        String flat= cursor.getString(cursor.getColumnIndex(MatchTable.Cols.M_FLAT));
+        Long date = cursor.getLong(cursor.getColumnIndex(MatchTable.Cols.M_DATE));
+        String pickup= cursor.getString(cursor.getColumnIndex(MatchTable.Cols.M_PICKUP));
+        String phone= cursor.getString(cursor.getColumnIndex(MatchTable.Cols.M_PHONE));
+        String crimeid=cursor.getString(cursor.getColumnIndex(MatchTable.Cols.TRIPID));
+
+
+        //pack into Crime object
+        Crime c= new Crime();  //create crime obj with details from the table's cursor
+
+        c.setTime(time);
+        c.setTitle(title);
+        c.setDate(date);
+        c.setFlat(flat);
+        c.setPhone(phone);
+        c.setPickUp(pickup);
+        c.setId(UUID.fromString(crimeid));
+        c.setMatched(true);
+        return  c;
+
     }
 }
