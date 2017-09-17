@@ -37,6 +37,7 @@ public class CrimeListFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private int changedCrimePosition;
+    private Button b;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +60,6 @@ public class CrimeListFragment extends Fragment {
                if(isInternetConnected(getContext())) {
                    UserDefaults u = UserDefaults.getUserDefaults(getActivity());
                    Crime c = new Crime(u.getName(), u.getFlat(), u.getPhoneno());
-                   // Crime c = new Crime();
                    crimes.addCrime(c);  //add to the model layer
                    Intent intent = CrimePagerActivity.newIntent(getActivity(), c.getId());
                    startActivity(intent);   //edit details of the new crime in the crimepageractivity
@@ -88,7 +88,7 @@ public class CrimeListFragment extends Fragment {
         View view;
         if(noOfCrimes==0){
             view=  inflater.inflate(R.layout.fragment_empty_crimelist, container, false);
-            Button b= (Button)view.findViewById(R.id.create_crime_button);
+            b= (Button)view.findViewById(R.id.create_crime_button);
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -115,9 +115,6 @@ public class CrimeListFragment extends Fragment {
         View view = updateView(inflater,container);
         mRecyclerView=(RecyclerView) view.findViewById(R.id.crime_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity())); //boiler plate. need it to for recycleview to work.
-     //   if(savedInstanceState!=null)
-       //     msubtitleVisible= savedInstanceState.getBoolean("saved subtitle state");
-
         updateUI();     //connect (and refetch data from) this mRecyclerview to crimeadapter.
         return view;
     }

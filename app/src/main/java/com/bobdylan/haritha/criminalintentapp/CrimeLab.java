@@ -225,7 +225,7 @@ public class CrimeLab {
                     ContentValues values =  new ContentValues();
                     values.put(UserTable.Cols.USERID, userID.toString());
                     mSQLiteDatabase.insert(UserTable.NAME,null,values);
-                    mDatabase.child("users").child(userID.toString()).setValue(userID.toString());
+                   // mDatabase.child("users").child(userID.toString()).setValue(userID.toString());
                 }
         } finally {
                 cursor.close();
@@ -263,30 +263,25 @@ public class CrimeLab {
 
         for(Map.Entry<String, Object> singleUserData: allUsers.entrySet()){
             if(!singleUserData.getKey().equals(userID.toString())){
-
                 Map<String, Object> allTripsData= (Map<String, Object>)singleUserData.getValue();
                 for(Map.Entry<String, Object> singleTripData: allTripsData.entrySet() ){
                     Map tripDetails =(Map)singleTripData.getValue();
-
-                    //Log.i("MATCHED TRIP? ", tripDetails.get("matched") +"");
                     if(tripDetails.get("matched").toString().equals("false")){
                         for (Crime c: getCrimes()) {
-                            //  Boolean ismatched= false;
-                          //  Log.i("INSIDE: ", ""+tripDetails.get("title"));
-                            if(!c.isMatched() && c.getPickUp().equals(tripDetails.get("pickUp"))){
-                            //    Log.i("MATCHED: ", "PICKUPS");
+                         if(!c.isMatched() && c.getPickUp().equals(tripDetails.get("pickUp"))){
                                 if(DateFormat.format("EEEE, dd MMMM yyyy",new Date(c.getDate())).equals(DateFormat.format("EEEE, dd MMMM yyyy", new Date((long)tripDetails.get("date"))))){
                                     Log.i("MATCHED: ", "DATES MATCHED " + c.getTime() + " and "+ tripDetails.get("time"));
-
                                     SimpleDateFormat dateFormat1 = new SimpleDateFormat("HH");
                                     dateFormat1.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
-
                                     SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH");
                                     dateFormat2.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
-
                                     Log.i("Times: ",dateFormat1.format(new Date(c.getTime())) + " and " +  dateFormat2.format(new Date((long)tripDetails.get("time"))));
                                     if((Math.abs(c.getTime()-(long)tripDetails.get("time")))/60000<=30){
                                         Log.i("MATCHED: ", "TIMES MATCHED" );
+                                        mDatabase.child("users").child(singleUserData.getKey()).child(singleTripData.getKey()).child("matched").setValue("true");
+                                        mDatabase.child("users").child(singleUserData.getKey()).child(singleTripData.getKey()).child("matched_userid").setValue(userID.toString());
+                                        mDatabase.child("users").child(singleUserData.getKey()).child(singleTripData.getKey()).child("matched_tripid").setValue(c.getId().toString());
+                                        Log.i("UPDATED","uid: "+singleUserData.getKey()+", crimeid: "+singleTripData.getKey()+ ", matched: true ");
                                         c.setMatched(true);
                                         updateCrime(c);
                                         addMatchedTrip(c,tripDetails);
@@ -294,14 +289,43 @@ public class CrimeLab {
                                     }
                                 }
                             }
-
                         }
                     }
-
                 }
+            }else{
+                //this user data
+                if(!singleUserData.getValue().equals(userID.toString())) {
+                    Map<String, Object> allTripsData = (Map<String, Object>) singleUserData.getValue();
+                    for (Map.Entry<String, Object> singleTripData : allTripsData.entrySet()) {
+                        Map tripDetails = (Map) singleTripData.getValue();
+                        UUID crimeid = UUID.fromString(singleTripData.getKey().toString());
+                        Crime c = getCrime(crimeid);
+                        Log.i("MATCHED VALUE : ", "" + Boolean.getBoolean(tripDetails.get("matched").toString()));
+                        if(c.isMatched()!=Boolean.parseBoolean(tripDetails.get("matched").toString())){
+                            c.setMatched(Boolean.parseBoolean(tripDetails.get("matched").toString()));
+                            ContentValues values = getContentValues(c); //ie in onPause of CrimeFragment
+                            mSQLiteDatabase.update(AppTable.NAME, values,
+                                    AppTable.Cols.CRIMEID + "= ?",
+                                    new String[]
+                                            {crimeid.toString()}
+                            );
+                            Log.i("updating: ", c.isMatched() + "");
 
+                            if(c.isMatched()==true) {
+                                if (tripDetails.get("matched_userid") != null && tripDetails.get("matched_tripid") != null && allUsers.get(tripDetails.get("matched_userid").toString()) != null) {
+                                    Map<String, Object> matchedUserDetails = (Map<String, Object>) allUsers.get(tripDetails.get("matched_userid").toString());
+                                    if (matchedUserDetails.get(tripDetails.get("matched_tripid").toString()) != null) {
+                                        Map matchedTripDetails = (Map) matchedUserDetails.get(tripDetails.get("matched_tripid").toString());
+                                        addMatchedTrip(c, matchedTripDetails);
+                                        Log.i("matcheddetails: ", matchedTripDetails + "");
+                                        createNotif(c.getId(), c.getPickUp(), c.getDate(), c.getTime());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
-
         }
     }
 
