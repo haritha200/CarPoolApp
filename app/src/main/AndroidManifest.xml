@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".CrimePagerActivity"
+                  android:windowSoftInputMode="stateVisible|adjustResize"
             android:parentActivityName=".CrimeListActivity"/> #this is all we need to do to create a heirarchy navigation
         <activity android:name=".CrimeListActivity">
             <intent-filter>
@@ -18,6 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".UserDefaultsActivity"
+                  android:parentActivityName=".CrimeListActivity"/>
     </application>
 
 </manifest>

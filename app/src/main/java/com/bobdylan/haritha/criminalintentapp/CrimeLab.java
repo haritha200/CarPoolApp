@@ -39,7 +39,7 @@ import database.AppDbHelper;
 public class CrimeLab {
     private static CrimeLab sCrimeLab;   //cant say sCrimelab = new CrimeLab() since we dont have a context instance
     private ArrayList<Crime> mCrimes;
-    private UUID userID;
+    public static UUID userID;
     private Context mContext;
     private SQLiteDatabase mSQLiteDatabase;
     private ValueEventListener valueListener;
@@ -103,7 +103,7 @@ public class CrimeLab {
 
     public void addCrime(Crime c){
 
-        if(c!=null && !c.getTitle().isEmpty()){
+        if(c!=null){
             ContentValues values= getContentValues(c);
             mSQLiteDatabase.insert(AppTable.NAME,null,values);
         }
@@ -205,26 +205,31 @@ public class CrimeLab {
     }
 
     private UUID getUserID() {
+         //Cursor  cursor = mSQLiteDatabase.rawQuery("select * from "+ UserTable.NAME,null);
+        Cursor cursor = mSQLiteDatabase.query(UserTable.NAME,
+                new String[] {UserTable.Cols.USERID},
+                null,
+                null,
+                null,
+                null,
+                null);
 
-       // if(userID==null){
-            Cursor  cursor = mSQLiteDatabase.rawQuery("select * from "+ UserTable.NAME,null);
+
             try {
                 if (cursor.getCount() != 0) {
-                  //  Log.i("USERID: ", "RETREIVED");
-                    cursor.moveToFirst();       //IMPORTANT. MOVE TO FIRST ROW OF ALL RETRIEVED ROWS, (here 1 row only)
+                    cursor.moveToFirst();
                     userID = UUID.fromString(cursor.getString(cursor.getColumnIndex(UserTable.Cols.USERID)));
+                    Log.i("RETREIVED", "Userid");
                 } else {
                     userID=UUID.randomUUID();
                     ContentValues values =  new ContentValues();
                     values.put(UserTable.Cols.USERID, userID.toString());
                     mSQLiteDatabase.insert(UserTable.NAME,null,values);
                     mDatabase.child("users").child(userID.toString()).setValue(userID.toString());
-                  //  Log.i("USERID: ", "ADDED");
                 }
         } finally {
                 cursor.close();
             }
-      //  }
         registerListener();
         return userID;
     }

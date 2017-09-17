@@ -27,6 +27,9 @@ public class AppDbSchema {
 
         public static final class Cols {
             public static final String USERID = "userid";
+            public static final String USERNAME = "username";
+            public static final String USERFLAT = "userflat";
+            public static final String USERPHONE = "userphone";
         }
 
     }

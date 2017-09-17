@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <TextView
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Default Passenger Details"
+        android:textStyle="bold"
+        style="?android:listSeparatorTextViewStyle"/>
+
+    <EditText
+        android:layout_marginTop="16dp"
+        android:id="@+id/user_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:layout_marginLeft="16dp"/>
+    <EditText
+        android:layout_marginTop="16dp"
+        android:id="@+id/user_flat_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Flat number (eg: D-602)"
+        android:layout_marginLeft="16dp"/>
+    <EditText
+        android:layout_marginTop="16dp"
+        android:id="@+id/user_phone_no"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Phone number"
+        android:layout_marginLeft="16dp"/>
+
+</LinearLayout>

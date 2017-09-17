@@ -1,6 +1,10 @@
 package com.bobdylan.haritha.criminalintentapp;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.UUID;
 
 /**
@@ -17,6 +21,27 @@ public class Crime {
     private long mTime;
     private boolean mIsMatched = false;
 
+    public Crime(String name, String flat, String phoneno) {
+        mId= UUID.randomUUID(); //generate new id for every new object
+        Date date=new Date();
+        mDate=date.getTime();
+
+        GregorianCalendar g = new GregorianCalendar();
+        g.setTimeZone(TimeZone.getTimeZone("GMT+05:30"));
+        g.setTime(date);
+        int hour= g.get(Calendar.HOUR_OF_DAY);
+        int min= g.get(Calendar.MINUTE);
+        g.set(0, 0, 0, hour, min);
+        mTime=g.getTimeInMillis();
+
+        mPickUp=new String("St. John's Wood Apartments");
+        mIsMatched = false;
+        mTitle=name;
+        mFlat=flat;
+        mPhone=phoneno;
+    }
+
+
     public boolean isMatched() {
         return mIsMatched;
     }
@@ -26,16 +51,15 @@ public class Crime {
     }
 
     public Crime() {
-
         mId= UUID.randomUUID(); //generate new id for every new object
         Date date=new Date();       //set as default date (will implement datepicker later to set date)
         //mTime=new Date();
         mDate=date.getTime();
         mTime=date.getTime();
-        mPickUp=new String("St. John's Wood Apartments");       //DEFAULTS
-        mTitle=  new String ("Ravisankar");
-        mFlat = new String("D-602");
-        mPhone= new String ("98441025554");
+        mPickUp=new String();       //DEFAULTS
+        mTitle=  new String ();
+        mFlat = new String();
+        mPhone= new String ();
         mIsMatched = false;
 
     }

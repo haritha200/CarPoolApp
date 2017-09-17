@@ -56,12 +56,19 @@ public class CrimeListFragment extends Fragment {
        CrimeLab crimes= CrimeLab.get(getActivity());
        switch (item.getItemId()) {      //identify which menu item was selected
            case R.id.add_crime: {
-               Crime c = new Crime();
+               UserDefaults u = UserDefaults.getUserDefaults(getActivity());
+               Crime c = new Crime(u.getName(), u.getFlat(), u.getPhoneno());
+              // Crime c = new Crime();
                crimes.addCrime(c);  //add to the model layer
                Intent intent = CrimePagerActivity.newIntent(getActivity(), c.getId());
                startActivity(intent);   //edit details of the new crime in the crimepageractivity
            //    crimes.updateCrime(c);
                return true;
+           }
+           case R.id.user_defaults:{
+                Intent intent = UserDefaultsActivity.newIntent(getActivity());
+                startActivity(intent);
+                return  true;
            }
            default:
                return super.onOptionsItemSelected(item);
@@ -81,7 +88,9 @@ public class CrimeListFragment extends Fragment {
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Crime c = new Crime();
+                    UserDefaults u = UserDefaults.getUserDefaults(getActivity());
+                    Crime c = new Crime(u.getName(), u.getFlat(), u.getPhoneno());
+                    // Crime c = new Crime();
                     crimes.addCrime(c);  //add to the model layer
                     Intent intent = CrimePagerActivity.newIntent(getActivity(), c.getId());
                     startActivity(intent);

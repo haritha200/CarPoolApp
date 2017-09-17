@@ -42,7 +42,10 @@ public class AppDbHelper extends SQLiteOpenHelper {
 
             db.execSQL("create table "+ UserTable.NAME+" ("+
                     " _id integer primary key autoincrement, "+
-                    UserTable.Cols.USERID+")"
+                    UserTable.Cols.USERID+","+
+                    UserTable.Cols.USERFLAT+","+
+                    UserTable.Cols.USERNAME+","+
+                    UserTable.Cols.USERPHONE+")"
             );
 
             db.execSQL("create table "+MatchTable.NAME+" ("+

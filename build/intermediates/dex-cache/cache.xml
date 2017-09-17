@@ -196,7 +196,7 @@
         jumboMode="true"
         optimize="true"
         revision="24.0.3"
-        sha1="c69596526b12c9d57381aa859fab3ddfac72ec12">
+        sha1="eb3d7c1001893aebd173a6061a14a7388e9f3143">
         <dex dex="/home/haritha/Downloads/my android app projects/criminalintent upto sql (with toolbar)_3/CriminalIntentApp/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_a20bee3f325e93efeaed56c480875cd4e5c9a12d/classes.dex" />
     </item>
     <item
@@ -313,7 +313,7 @@
         jumboMode="true"
         optimize="true"
         revision="24.0.3"
-        sha1="4dc063644a77a1719cd84aca56833a6161b9f0d3">
+        sha1="d35adee5d834e88fb151fcdb8a4fde6acc18628f">
         <dex dex="/home/haritha/Downloads/my android app projects/criminalintent upto sql (with toolbar)_3/CriminalIntentApp/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_f3fff3005948a21c3efe3cdc396b06e4e0cf52a7/classes.dex" />
     </item>
     <item

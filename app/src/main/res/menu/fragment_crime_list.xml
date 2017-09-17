@@ -2,6 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+
+    <item android:id="@+id/user_defaults"
+          android:icon="@drawable/ic_user_defaults"
+          app:showAsAction= "ifRoom"
+          android:title="User Defaults"/>
+
     <item android:id="@+id/add_crime"
         android:icon="@drawable/ic_menu_add"
         android:title="Add Crime"
