@@ -42,6 +42,7 @@ public class UserDefaults {
         );
 
         try {
+            Log.i("NO OF USER ENTRIES", ""+ cursor.getCount());
             if (cursor.getCount() != 0) {
                 cursor.moveToFirst();
                 String ret_name = cursor.getString(cursor.getColumnIndex(AppDbSchema.UserTable.Cols.USERNAME));

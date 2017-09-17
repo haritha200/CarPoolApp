@@ -315,13 +315,17 @@ public class CrimeLab {
 
         Intent notificationIntent = CrimePagerActivity.newIntent(mContext,tripid );
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);    //FLAG_UPDATE_CURRENT allows you to access the intent args
+        PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);//FLAG_UPDATE_CURRENT allows you to access the intent args
+        if(pickup.equals("St. John's Wood Apartments")){
+            pickup="SJW";
+        }
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(mContext)
                         .setSmallIcon(R.drawable.notification_icon)
-                        .setContentTitle(pickup+ "Pickup Matched!")
+                        .setContentTitle(pickup+ " Pickup Matched!")
                         .setDefaults(Notification.DEFAULT_SOUND| Notification.DEFAULT_LIGHTS|Notification.DEFAULT_VIBRATE)
                         .setAutoCancel(true)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Pickup at "+ timematch+ " on "+datematch +" is matched!"))
                         .setContentIntent(intent)
                         .setContentText("Pickup at "+ timematch+ " on "+datematch +" is matched!");
 
@@ -329,7 +333,6 @@ public class CrimeLab {
 
         mNotificationManager.notify(001, mBuilder.build());
     }
-
 
     public void addMatchedTrip(Crime myTrip, Map passengerDetails){
         ContentValues values =  new ContentValues();

@@ -1,7 +1,10 @@
 package com.bobdylan.haritha.criminalintentapp;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,17 +21,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
-import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,13 +56,17 @@ public class CrimeListFragment extends Fragment {
        CrimeLab crimes= CrimeLab.get(getActivity());
        switch (item.getItemId()) {      //identify which menu item was selected
            case R.id.add_crime: {
-               UserDefaults u = UserDefaults.getUserDefaults(getActivity());
-               Crime c = new Crime(u.getName(), u.getFlat(), u.getPhoneno());
-              // Crime c = new Crime();
-               crimes.addCrime(c);  //add to the model layer
-               Intent intent = CrimePagerActivity.newIntent(getActivity(), c.getId());
-               startActivity(intent);   //edit details of the new crime in the crimepageractivity
-           //    crimes.updateCrime(c);
+               if(isInternetConnected(getContext())) {
+                   UserDefaults u = UserDefaults.getUserDefaults(getActivity());
+                   Crime c = new Crime(u.getName(), u.getFlat(), u.getPhoneno());
+                   // Crime c = new Crime();
+                   crimes.addCrime(c);  //add to the model layer
+                   Intent intent = CrimePagerActivity.newIntent(getActivity(), c.getId());
+                   startActivity(intent);   //edit details of the new crime in the crimepageractivity
+                   //    crimes.updateCrime(c);
+               } else{
+                   Toast.makeText(getContext(), "Please connect to internet to add new trip", Toast.LENGTH_LONG).show();
+               }
                return true;
            }
            case R.id.user_defaults:{
@@ -88,12 +92,15 @@ public class CrimeListFragment extends Fragment {
             b.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    UserDefaults u = UserDefaults.getUserDefaults(getActivity());
-                    Crime c = new Crime(u.getName(), u.getFlat(), u.getPhoneno());
-                    // Crime c = new Crime();
-                    crimes.addCrime(c);  //add to the model layer
-                    Intent intent = CrimePagerActivity.newIntent(getActivity(), c.getId());
-                    startActivity(intent);
+                    if(isInternetConnected(getContext())) {
+                        UserDefaults u = UserDefaults.getUserDefaults(getActivity());
+                        Crime c = new Crime(u.getName(), u.getFlat(), u.getPhoneno());
+                        crimes.addCrime(c);
+                        Intent intent = CrimePagerActivity.newIntent(getActivity(), c.getId());
+                        startActivity(intent);
+                    } else{
+                        Toast.makeText(getContext(), "Please connect to internet to add new trip", Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         }
@@ -141,6 +148,13 @@ public class CrimeListFragment extends Fragment {
             mRecyclerView.setAdapter(new CrimeAdapter());
         }
 
+    }
+
+    public static boolean isInternetConnected(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager)  context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     //since each viewholder manages one view, we can make it implement an onclicklistener as proxy too

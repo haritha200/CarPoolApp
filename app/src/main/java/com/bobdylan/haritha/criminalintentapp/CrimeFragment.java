@@ -56,8 +56,14 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if(!isDelete)
-            CrimeLab.get(getActivity()).updateCrime(mCrime);
+
+        if (CrimeListFragment.isInternetConnected(getContext())){
+            if(!isDelete)
+                CrimeLab.get(getActivity()).updateCrime(mCrime);
+        } else{
+            Toast.makeText(getContext(), "Changes not saved. \nPlease connect to internet to edit trip", Toast.LENGTH_LONG).show();
+
+        }
         //  CrimeLab crimelab = CrimeLab.get(getContext());
         /// mDatabase.child("users").child(crimelab.getUserID().toString()).child(mCrime.getId().toString()).setValue(mCrime);
         //  Log.i("USERID ", "VALUE PUSHED TO FIREBASE");
@@ -90,7 +96,10 @@ public class CrimeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         UUID cid=(UUID)getArguments().getSerializable(ARG_CRIME_ID);
         mCrime=CrimeLab.get(getActivity()).getCrime(cid);
-        setHasOptionsMenu(true);
+        if(CrimeListFragment.isInternetConnected(getContext()))
+            setHasOptionsMenu(true);
+        else
+            setHasOptionsMenu(false);
 
     }
 
