@@ -68,6 +68,28 @@ public class CrimeLab {
     }
 
     public void deleteCrime(Crime c){
+        final String id = c.getId().toString();
+
+        if(c.isMatched()){
+            //set matched's trip's 'matched' value to "cancelled"
+            ValueEventListener cancelMatch = new ValueEventListener(){
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String matcheduid= dataSnapshot.child("matched_userid").getValue().toString();
+                    String matchedtripid= dataSnapshot.child("matched_tripid").getValue().toString();
+                    mDatabase.child("users").child(matcheduid).child(matchedtripid).child("matched").setValue("cancelled");
+                  // dataSnapshot
+                    mDatabase.child("users").child(matcheduid).child(matchedtripid).child("matched_userid").removeValue();
+                    mDatabase.child("users").child(matcheduid).child(matchedtripid).child("matched_tripid").removeValue();
+
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            };
+            mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).addListenerForSingleValueEvent(cancelMatch);
+            mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).removeEventListener(cancelMatch);
+        }
         mSQLiteDatabase.delete(AppTable.NAME,
                 AppTable.Cols.CRIMEID+ "= ?",
                 new String[]
@@ -79,6 +101,7 @@ public class CrimeLab {
                 new String[]
                         {c.getId().toString()}
         );
+
 
         mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).removeValue();
      //   Log.i("deleted crimesize:", ""+getCrimes().size());
@@ -95,8 +118,8 @@ public class CrimeLab {
         );
 
         Log.i("updating: ", c.getTime() +  "");
-
         mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).setValue(c);
+
         registerListener();
 
     }
@@ -278,12 +301,16 @@ public class CrimeLab {
                                     Log.i("Times: ",dateFormat1.format(new Date(c.getTime())) + " and " +  dateFormat2.format(new Date((long)tripDetails.get("time"))));
                                     if((Math.abs(c.getTime()-(long)tripDetails.get("time")))/60000<=30){
                                         Log.i("MATCHED: ", "TIMES MATCHED" );
+                                        c.setMatched(true);
+                                        updateCrime(c);
                                         mDatabase.child("users").child(singleUserData.getKey()).child(singleTripData.getKey()).child("matched").setValue("true");
                                         mDatabase.child("users").child(singleUserData.getKey()).child(singleTripData.getKey()).child("matched_userid").setValue(userID.toString());
                                         mDatabase.child("users").child(singleUserData.getKey()).child(singleTripData.getKey()).child("matched_tripid").setValue(c.getId().toString());
+                                        mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).child("matched_userid").setValue(singleUserData.getKey());
+                                        mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).child("matched_tripid").setValue(singleTripData.getKey());
+
                                         Log.i("UPDATED","uid: "+singleUserData.getKey()+", crimeid: "+singleTripData.getKey()+ ", matched: true ");
-                                        c.setMatched(true);
-                                        updateCrime(c);
+
                                         addMatchedTrip(c,tripDetails);
                                         createNotif(c.getId(),c.getPickUp(), c.getDate(),c.getTime());
                                     }
@@ -300,25 +327,46 @@ public class CrimeLab {
                         Map tripDetails = (Map) singleTripData.getValue();
                         UUID crimeid = UUID.fromString(singleTripData.getKey().toString());
                         Crime c = getCrime(crimeid);
-                        Log.i("MATCHED VALUE : ", "" + Boolean.getBoolean(tripDetails.get("matched").toString()));
-                        if(c.isMatched()!=Boolean.parseBoolean(tripDetails.get("matched").toString())){
-                            c.setMatched(Boolean.parseBoolean(tripDetails.get("matched").toString()));
-                            ContentValues values = getContentValues(c); //ie in onPause of CrimeFragment
-                            mSQLiteDatabase.update(AppTable.NAME, values,
-                                    AppTable.Cols.CRIMEID + "= ?",
-                                    new String[]
-                                            {crimeid.toString()}
-                            );
-                            Log.i("updating: ", c.isMatched() + "");
+                        if (tripDetails != null) {
 
-                            if(c.isMatched()==true) {
-                                if (tripDetails.get("matched_userid") != null && tripDetails.get("matched_tripid") != null && allUsers.get(tripDetails.get("matched_userid").toString()) != null) {
-                                    Map<String, Object> matchedUserDetails = (Map<String, Object>) allUsers.get(tripDetails.get("matched_userid").toString());
-                                    if (matchedUserDetails.get(tripDetails.get("matched_tripid").toString()) != null) {
-                                        Map matchedTripDetails = (Map) matchedUserDetails.get(tripDetails.get("matched_tripid").toString());
-                                        addMatchedTrip(c, matchedTripDetails);
-                                        Log.i("matcheddetails: ", matchedTripDetails + "");
-                                        createNotif(c.getId(), c.getPickUp(), c.getDate(), c.getTime());
+                            Log.i("MATCHED VALUE : ", "" + (tripDetails));
+                            if (c.isMatched() != Boolean.parseBoolean(tripDetails.get("matched").toString())) {
+
+                                if(tripDetails.get("matched").toString().equals("cancelled")){
+                                    //createCancelledNotif();
+                                    c.setMatched(false);
+                                    ContentValues values = getContentValues(c); //ie in onPause of CrimeFragment
+                                    mSQLiteDatabase.update(AppTable.NAME, values,
+                                            AppTable.Cols.CRIMEID + "= ?",
+                                            new String[]
+                                                    {crimeid.toString()}
+                                    );
+                                    Log.i("Cancelled, updated to ", c.isMatched() + "");
+                                    mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).child("matched").setValue("false");
+                                    mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).child("matched_userid").removeValue();
+                                    mDatabase.child("users").child(userID.toString()).child(c.getId().toString()).child("matched_tripid").removeValue();
+                                    createCancelledNotif(c.getId());
+
+                                }else{
+                                    c.setMatched(Boolean.parseBoolean(tripDetails.get("matched").toString()));
+                                    ContentValues values = getContentValues(c); //ie in onPause of CrimeFragment
+                                    mSQLiteDatabase.update(AppTable.NAME, values,
+                                            AppTable.Cols.CRIMEID + "= ?",
+                                            new String[]
+                                                    {crimeid.toString()}
+                                    );
+                                    Log.i("updating to: ", c.isMatched() + "");
+
+                                    if (c.isMatched() == true) {
+                                        if (tripDetails.get("matched_userid") != null && tripDetails.get("matched_tripid") != null && allUsers.get(tripDetails.get("matched_userid").toString()) != null) {
+                                            Map<String, Object> matchedUserDetails = (Map<String, Object>) allUsers.get(tripDetails.get("matched_userid").toString());
+                                            if (matchedUserDetails.get(tripDetails.get("matched_tripid").toString()) != null) {
+                                                Map matchedTripDetails = (Map) matchedUserDetails.get(tripDetails.get("matched_tripid").toString());
+                                                addMatchedTrip(c, matchedTripDetails);
+                                                Log.i("matcheddetails: ", matchedTripDetails + "");
+                                                createNotif(c.getId(), c.getPickUp(), c.getDate(), c.getTime());
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -327,6 +375,26 @@ public class CrimeLab {
                 }
             }
         }
+    }
+
+    private void createCancelledNotif(UUID tripid) {
+        Intent notificationIntent = CrimePagerActivity.newIntent(mContext,tripid );
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent intent = PendingIntent.getActivity(mContext, 0, notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);//FLAG_UPDATE_CURRENT allows you to access the intent args
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(mContext)
+                        .setSmallIcon(R.drawable.notification_icon)
+                        .setContentTitle("Pickup Match Cancelled!")
+                        .setDefaults(Notification.DEFAULT_SOUND| Notification.DEFAULT_LIGHTS|Notification.DEFAULT_VIBRATE)
+                        .setAutoCancel(true)
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Your carpooled match cancelled their trip"))
+                        .setContentIntent(intent)
+                        .setContentText("Your carpooled match cancelled their trip");
+
+        NotificationManager mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        mNotificationManager.notify(001, mBuilder.build());
     }
 
     public void createNotif(UUID tripid, String pickup, long date, long time){
